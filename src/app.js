@@ -36,10 +36,12 @@ polyfillIfRequired();
  * @method createVRCanvas
  */
 p5.prototype.createVRCanvas = function () {
-  noLoop();
+  p5.prototype.noLoop();
   p5xr.instance = new p5vr();
+  p5xr.instance.setPInst(this);
   p5xr.instance.initVR();
 };
+p5.prototype.registerPreloadMethod('createVRCanvas', p5.prototype);
 
 /**
  * starts the process of creating a VR-ready canvas
@@ -55,8 +57,8 @@ p5.prototype.createARCanvas = function (mode) {
     p5xr.instance = new ARMarkerTracker();
     p5xr.instance.startMarkerSketch();
   } else if (mode === constants.ARCORE) {
-    noLoop();
     p5xr.instance = new p5ar();
+    p5xr.instance.noLoop();
     p5xr.instance.init();
   } else {
     throw new Error('Cannot start AR without a MODE argument (either MARKER or ARCORE)');
@@ -73,7 +75,7 @@ p5.prototype.createARCanvas = function (mode) {
  * @param  {Number} b blue value of background
  */
 p5.prototype.setVRBackgroundColor = function (r, g, b) {
-  p5xr.instance.curClearColor = color(r, g, b);
+  p5xr.instance.curClearColor = this.color(r, g, b);
 };
 
 p5.prototype.detectMarkers = function (cap) {
@@ -93,16 +95,16 @@ p5.prototype.getSmoothTrackerMatrix = function (id) {
 };
 
 p5.prototype.showVideoFeed = function (cap) {
-  push();
+  p5xr.instance.push();
   this._renderer.GL.disable(this._renderer.GL.DEPTH_TEST);
   this._renderer.GL.depthMask(false);
 
-  texture(cap);
+  p5xr.instance.texture(cap);
   rect(-width / 2, -height / 2, width, height);
 
   this._renderer.GL.enable(this._renderer.GL.DEPTH_TEST);
   this._renderer.GL.depthMask(true);
-  pop();
+  p5xr.instance.pop();
 };
 
 p5.prototype.isMarkerVisible = function (id) {
@@ -117,7 +119,7 @@ p5.prototype.addMarker = function (patt, callback) {
   return p5xr.instance.addMarker(patt, callback);
 };
 
-p5.prototype.surroundTexture = function (tex) {
+p5.prototype.surroundTexture = function () {
   push();
   texture(tex);
   scale(-1, 1, 1);

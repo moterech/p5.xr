@@ -11,7 +11,7 @@ export default class p5xrViewer {
 
     this.setPosition = function(x, y, z) {
       this.position.set(x, y, z);
-      p5.instance._renderer.translate(-x, -y, -z);
+      p5xr.instance.pInst._renderer.translate(-x, -y, -z);
     };
   }
 
@@ -27,17 +27,17 @@ export default class p5xrViewer {
   // TODO: set matrices for non polyfill
   set view(newView) {
     this._view = newView;
-    p5.instance._renderer.uMVMatrix.set(this._view.transform.inverse.matrix);
-    p5.instance._renderer.uPMatrix.set(this._view.projectionMatrix);
-    p5.instance._renderer._curCamera.cameraMatrix.set(
+    p5xr.instance.pInst._renderer.uMVMatrix.set(this._view.transform.inverse.matrix);
+    p5xr.instance.pInst._renderer.uPMatrix.set(this._view.projectionMatrix);
+    p5xr.instance.pInst._renderer._curCamera.cameraMatrix.set(
       p5.Matrix.identity().mult(this._view.transform.inverse.matrix)
     );
     
     if(newView.eye === 'left') {
-      this.leftPMatrix.set(p5.instance._renderer.uPMatrix.copy());
+      this.leftPMatrix.set(p5xr.instance.pInst._renderer.uPMatrix.copy());
     }
     else {
-      this.rightPMatrix.set(p5.instance._renderer.uPMatrix.copy());
+      this.rightPMatrix.set(p5xr.instance.pInst._renderer.uPMatrix.copy());
     }
   }
 
@@ -52,16 +52,16 @@ p5.prototype.setViewerPosition = function(x, y, z) {
 };
 
 p5.prototype.sticky = function(drawOnTop = false) {
-  push();
+  p5xr.instance.pInst.push();
   p5xr.instance.viewer.drawOnTop = drawOnTop;
   if(drawOnTop)
-    p5.instance._renderer.GL.disable(p5.instance._renderer.GL.DEPTH_TEST);
-  p5.instance._renderer.uMVMatrix.set(p5.Matrix.identity());
+    p5xr.instance.pInst._renderer.GL.disable(p5xr.instance.pInst._renderer.GL.DEPTH_TEST);
+  p5xr.instance.pInst._renderer.uMVMatrix.set(p5.Matrix.identity());
   let viewerPosition = p5xr.instance.viewer.position;
   setViewerPosition(viewerPosition.x, viewerPosition.y, viewerPosition.z);
 };
 
 p5.prototype.noSticky = function() {
-  p5.instance._renderer.GL.enable(p5.instance._renderer.GL.DEPTH_TEST);
-  pop();
+  p5xr.instance.pInst._renderer.GL.enable(p5xr.instance.pInst._renderer.GL.DEPTH_TEST);
+  p5xr.instance.pInst.pop();
 };

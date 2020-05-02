@@ -23,8 +23,8 @@ export default class p5vr extends p5xr {
   startSketch(session) {
     this.xrSession = this.xrButton.session = session;
     this.xrSession.addEventListener('end', this.onSessionEnded.bind(this));
-    if (typeof window.setup === 'function') {
-      window.setup();
+    if (typeof this.context.setup === 'function') {
+      this.context.setup();
     }
     this.onRequestSession();
   }
@@ -40,8 +40,8 @@ export default class p5vr extends p5xr {
 
   onRequestSession() {
     this.xrButton.setTitle(this.isVR ? 'EXIT VR' : 'EXIT AR');
-    p5.instance._renderer._curCamera.cameraType = 'custom';
-    this.gl = canvas.getContext('webgl', {
+    this.pInst._renderer._curCamera.cameraType = 'custom';
+    this.gl = this.pInst.canvas.getContext('webgl', {
       xrCompatible: true
     });
     this.gl.makeXRCompatible().then(() => {
@@ -69,6 +69,6 @@ export default class p5vr extends p5xr {
     if (this.curClearColor === null) {
       return;
     }
-    p5.instance.background(this.curClearColor);
+    this.pInst.background(this.curClearColor);
   }
 }

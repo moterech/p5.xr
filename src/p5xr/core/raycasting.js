@@ -89,7 +89,7 @@ p5.prototype.intersectsSphere = function() {
     return false;
     
   // sphere in View space
-  let uMVMatrix = p5.instance._renderer.uMVMatrix.copy();
+  let uMVMatrix = p5xr.instance.pInst._renderer.uMVMatrix.copy();
   uMVMatrix.transpose(uMVMatrix);
   uMVMatrix = uMVMatrix.mat4;
     
@@ -143,7 +143,7 @@ p5.prototype.intersectsBox = function() {
   // bounding box in view space will not be axis aligned
   // so we will transform ray to box space by applying inverse(uMVMatrix) to origin and direction
 
-  let uMVMatrixInv = p5.instance._renderer.uMVMatrix.copy();
+  let uMVMatrixInv = p5xr.instance.pInst._renderer.uMVMatrix.copy();
   uMVMatrixInv.transpose(uMVMatrixInv);
   uMVMatrixInv.invert(uMVMatrixInv);
   uMVMatrixInv = uMVMatrixInv.mat4;
@@ -208,7 +208,7 @@ p5.prototype.intersectsPlane = function() {
   // transforming ray to local plane space
   // intersection point will be with respect to the plane
 
-  let uMVMatrixInv = p5.instance._renderer.uMVMatrix.copy();
+  let uMVMatrixInv = p5xr.instance.pInst._renderer.uMVMatrix.copy();
   uMVMatrixInv.transpose(uMVMatrixInv);
   uMVMatrixInv.invert(uMVMatrixInv);
   uMVMatrixInv = uMVMatrixInv.mat4;
@@ -247,7 +247,7 @@ p5.prototype.generateRay = function(x1, y1, z1, x2, y2, z2) {
   direction = p5.Vector.sub(direction, origin);
   direction.normalize();
     
-  let uMVMatrix = p5.instance._renderer.uMVMatrix.copy();
+  let uMVMatrix = p5xr.instance.pInst._renderer.uMVMatrix.copy();
   uMVMatrix.transpose(uMVMatrix);
   uMVMatrix = uMVMatrix.mat4;
 

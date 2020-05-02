@@ -17,6 +17,8 @@ import p5xrButton from './p5xrButton';
  */
 export default class p5xr {
   constructor() {
+    this.context = undefined;
+    this.pInst = undefined;
     this.xrDevice = null;
     this.xrButton;
     this.isVR;
@@ -26,19 +28,24 @@ export default class p5xr {
     this.xrHitTestSource = null;
     this.frame = null;
     this.gl = null;
-    this.curClearColor = color(255, 255, 255);
+  }
+
+  setPInst(pInst) {
+    this.pInst = pInst;
+    this.context = this.pInst;
+    this.curClearColor = this.pInst.color(this.pInst.RGB, 255, 255, 255);
     this.viewer = new p5xrViewer();
   }
 
   removeLoadingElement() {
-    const loadingScreen = document.getElementById(window._loadingScreenId);
+    const loadingScreen = document.getElementById(this.context._loadingScreenId);
     if (loadingScreen) {
       loadingScreen.parentNode.removeChild(loadingScreen);
     }
   }
 
   _updatexr() {
-    const renderer = p5.instance._renderer;
+    const renderer = this.pInst._renderer;
     // reset light data for new frame.
 
     renderer.ambientLightColors.length = 0;
@@ -67,8 +74,8 @@ export default class p5xr {
 
   // Substitute for p5._setup() which creates a default webgl canvas
   _setupxr() {
-    createCanvas(windowWidth, windowHeight, WEBGL);
-    p5.instance._setupDone = true;
+    this.context.createCanvas(this.context.windowWidth, this.context.windowHeight, this.context.WEBGL);
+    this.context._setupDone = true;
   }
 
   /**
@@ -80,7 +87,7 @@ export default class p5xr {
    * <b>TODO:</b> Custom styling for button prior to VR canvas creation.
    */
   init() {
-    p5.instance._incrementPreload();
+    this.pInst._incrementPreload();
     this._setupxr();
     this.isVR = this instanceof p5vr;
     this.removeLoadingElement();
@@ -172,20 +179,19 @@ export default class p5xr {
   }
 
   _updateViewport(viewport) {
-    p5.instance._renderer._viewport[0] = viewport.x;
-    p5.instance._renderer._viewport[1] = viewport.y;
-    p5.instance._renderer._viewport[2] = viewport.width;
-    p5.instance._renderer._viewport[3] = viewport.height;
+    this.pInst._renderer._viewport[0] = viewport.x;
+    this.pInst._renderer._viewport[1] = viewport.y;
+    this.pInst._renderer._viewport[2] = viewport.width;
+    this.pInst._renderer._viewport[3] = viewport.height;
   }
 
   /**
    * Runs the code that the user has in `draw()` once for each eye
    */
   _drawEye(eyeIndex) {
-    const context = window;
-    const userSetup = context.setup;
-    const userDraw = context.draw;
-    const userCalculate = context.calculate;
+    const userSetup = this.context.setup;
+    const userDraw = this.context.draw;
+    const userCalculate = this.context.calculate;
 
     if (this.isVR) {
       if (eyeIndex === 0) {
@@ -195,31 +201,31 @@ export default class p5xr {
       }
     } else {
       // Scale is much smaller in AR
-      scale(0.01);
+      this.context.scale(0.01);
     }
     // 2D Mode should use graphics object
-    if (!p5.instance._renderer.isP3D) {
+    if (!this.pInst._renderer.isP3D) {
       console.error('Sketch does not have 3D Renderer');
       return;
     }
 
     if (typeof userDraw === 'function') {
       if (typeof userSetup === 'undefined') {
-        context.scale(context._pixelDensity, context._pixelDensity);
+        this.context.scale(this.context._pixelDensity, this.context._pixelDensity);
       }
 
       this._updatexr();
 
-      p5.instance._inUserDraw = true;
+      this.pInst._inUserDraw = true;
 
       try {
         userDraw();
       } finally {
-        p5.instance._inUserDraw = false;
+        this.pInst._inUserDraw = false;
       }
 
       if (eyeIndex === 1) {
-        context._setProperty('frameCount', context.frameCount + 1);
+        this.context._setProperty('frameCount', this.context.frameCount + 1);
       }
     }
   }

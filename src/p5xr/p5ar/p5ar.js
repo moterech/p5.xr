@@ -23,15 +23,14 @@ export default class p5ar extends p5xr {
     this.xrSession = this.xrButton.session = session;
     this.xrSession.addEventListener('end', this.onSessionEnded);
     this.xrSession.addEventListener('select', this.onSelect);
-    this.canvas = p5.instance.canvas;
-    p5.instance._renderer._curCamera.cameraType = 'custom';
+    this.canvas = this.pInst.canvas;
+    this.pInst._renderer._curCamera.cameraType = 'custom';
     this.onRequestSession();
-    p5.instance._decrementPreload();
+    this.pInst._decrementPreload();
   }
 
   onSelect(event) {
-    const context = window;
-    const userMousePressed = context.mousePressed;
+    const userMousePressed = this.context.mousePressed;
     if (typeof userMousePressed === 'function') {
       userMousePressed();
     }
